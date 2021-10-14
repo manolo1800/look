@@ -249,7 +249,7 @@
                             <hr />
                         </div>
                         <div class="aside">
-                            @include('layouts.menu_left')
+                            
                         </div>
                         <div class='col-xs-8 col-sm-8 col-md-8 col-xl-8 col-xs-offset-1 col-md-offset-1 col-sm-offset-1'>
                             <div class='class="form-group col-xs-12"'>
@@ -303,7 +303,7 @@
         //alert(prueba);
         $.ajax({
             type: "get",
-            url: "{{route('aprovision.show',"
+            url: "{{route('olt.show',"
             id ")}}",
             data: {
                 id: id,
@@ -328,6 +328,7 @@
             }
 
         });
+        
     }
 </script>
 @endsection

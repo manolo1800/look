@@ -30,12 +30,12 @@ class OltController extends Controller
     public function index()
     {
         //
-        
+
 	    $datos['central'] = central::all();
         $datos['status'] = status::all()->except([3, 4]);
         $datos['proveedor'] = proveedor::all();
         $datos['puertos'] = puertos::all();
-	   
+
         return view('aprovicion.aprovicion', $datos);
     }
 
@@ -93,27 +93,27 @@ class OltController extends Controller
                     'ip_olt' => $request->ip_olt,
                     'Nombre_elemento' => $request->Nombre_elemento,
                     'Tipo' => $request->Tipo,
-                    'proveedor' => $request->proveedor,
+                    'id_proveedor' => $request->proveedor,
                     'puerto_serv_inicial' => $request->puerto_serv_inicial,
                     'numero_puertos' => $request->numero_puertos,
                     'puerto_serv_Xnumero_puertos' => $request->puerto_serv_inicial * $request->numero_puertos,
                     'created_at' => now()->toDateTime(),
                     'user_email_created' => Auth::user()->email,
                 ]);
-                $ultimoId = olt::latest('id')->first()->id;
-                // return response()->json($serviceProfile);
-                for ($i = 0; $i < $request->puerto_uplin; $i++) {
-                    # code...
-                    $puerto = 'puerto_' . $i;
-                    $estado = 'estado_' . $i;
-                    $sfpt = 'sfpt_' . $i;
-                    puertouplink::insert([
-                        'cant_uplink' => $request->puerto_uplin,
-                        'estado' => $request->$estado,
-                        'id_uplink' => $request->$sfpt,
-                        'id_olt' => $ultimoId,
-                    ]);
-                }
+                // $ultimoId = olt::latest('id')->first()->id;
+                // // return response()->json($serviceProfile);
+                // for ($i = 0; $i < $request->puerto_uplin; $i++) {
+                //     # code...
+                //     $puerto = 'puerto_' . $i;
+                //     $estado = 'estado_' . $i;
+                //     $sfpt = 'sfpt_' . $i;
+                //     puertouplink::insert([
+                //         'cant_uplink' => $request->$puerto,
+                //         'estado' => $request->$estado,
+                //         'id_uplink' => $request->$sfpt,
+                //         'id_olt' => $ultimoId,
+                //     ]);
+                // }
                 $respuesta['respuesta'] = array(
                     "title" => "Creación de olt",
                     "msg" => "Estimado usuario,olt se ha creado exitosamente",
@@ -148,10 +148,10 @@ class OltController extends Controller
     {
         //
         $id1 = $request->id;
-        $id = DB:: table('olts')->where('id','=',$id1)->get();       
+        $id = DB:: table('olts')->where('id','=',$id1)->get();
         return $id;
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -167,9 +167,15 @@ class OltController extends Controller
         $datos =   central::all()->except($olt->central_id);
         $estatusactu = DB::select('SELECT id, "Estatus", descripcion FROM statuses where "Estatus" = ?', [$olt->ID_estatus] );
         $estatusall =DB::select('SELECT id, "Estatus", descripcion FROM statuses where "Estatus" != ?', [$olt->ID_estatus]);
+        $proveedoractu = DB::select('SELECT id, "Proveedor" FROM proveedors where "Proveedor" = ?', [$olt->proveedor]);
+        $proveedorall = DB::select('SELECT id, "Proveedor" FROM proveedors where "Proveedor" != ?', [$olt->proveedor]);
+        $puertouplinks = DB::select('SELECT *  FROM ((SELECT id, id_olt,id_uplink,estado FROM puertouplinks where id_olt = ? ) AS T1
+        INNER JOIN (SELECT id,"nameSfp",id_tipo FROM sfps) AS T2 ON T1.id_uplink = T2.id
+        INNER JOIN (SELECT id,"Tipo" FROM tipos) AS T3 ON T2.id_tipo = T3.id) ', [$idolt]);
+        // return response()->json($puertouplinks);
         // return view('aprovicion.edit')->with('olt',$olt)->with('central',$central);
-        return view('aprovicion.edit', ['olt' => $olt, 'central' =>$central, 'centrales' => $datos, 'estatusactu' =>$estatusactu, 'estatusall' =>$estatusall]);
-        // return response()->json($datos);
+        return view('aprovicion.edit', ['olt' => $olt, 'central' =>$central, 'centrales' => $datos, 'estatusactu' =>$estatusactu, 'estatusall' =>$estatusall ,'proveedoractu' => $proveedoractu, 'proveedorall' =>$proveedorall, 'puertouplinks' => $puertouplinks]);
+        // return response()->json($puertouplinks);
     }
 
     /**
@@ -186,11 +192,11 @@ class OltController extends Controller
         $validate = request()->validate(
                 [
                 'central_id' => 'required|numeric',
-                'fila' => 'required|numeric|digits_between:1,2',
-                'piso' => 'required|numeric|digits_between:1,2',
-                'sala' => 'required|numeric|digits_between:1,2',
-                'bastidor' => 'required|numeric|digits_between:1,2',
-                'subbastidor' => 'required|numeric|digits_between:1,2',
+                'fila' => ['required', new ContrasenaFuerte()], //|digits_between:1,4',
+                'piso' =>  ['required', new ContrasenaFuerte()], //'required|digits_between:1,4',
+                'sala' =>  ['required', new ContrasenaFuerte()], //'required|digits_between:1,4',
+                'bastidor' =>  ['required', new ContrasenaFuerte()], //'required|digits_between:1,4',
+                'subbastidor' =>  ['required', new ContrasenaFuerte()], //'required|digits_between:1,4',
                 // 'id_olt' => 'required|alpha_num|between:1,10',
                 'ip_olt' => 'required|ip',
                 'Nombre_elemento' => 'required|string',
@@ -224,19 +230,19 @@ class OltController extends Controller
             // $olt = olt::findOrFail($idolt);
             // return response()->json($olt);
             $ultimoId = olt::latest('id')->first()->id;
-            // return response()->json($serviceProfile);
-            for ($i = 0; $i < $request->puerto_uplin; $i++) {
-                # code...
-                $puerto = 'puerto_' . $i;
-                $estado = 'estado_' . $i;
-                $sfpt = 'sfpt_' . $i;
-                puertouplink::insert([
-                    'cant_uplink' => $request->puerto_uplin,
-                    'estado' => $request->$estado,
-                    'id_uplink' => $request->$sfpt,
-                    'id_olt' => $ultimoId,
-                ]);
-            }
+        // return response()->json($serviceProfile);
+        // for ($i = 0; $i < $request->puerto_uplin; $i++) {
+        //     # code...
+        //     $puerto = 'puerto_' . $i;
+        //     $estado = 'estado_' . $i;
+        //     $sfpt = 'sfpt_' . $i;
+        //     puertouplink::where('id_olt', '=', $ultimoId)->update([
+        //         'cant_uplink' => $request->$puerto,
+        //         'estado' => $request->$estado,
+        //         'id_uplink' => $request->$sfpt,
+        //         'id_olt' => $ultimoId,
+        //     ]);
+        // }
             $respuesta['respuesta'] = array(
                 "title" => "Creación de olt",
                 "msg" => "Estimado usuario,olt se ha modificado exitosamente",
@@ -270,7 +276,7 @@ class OltController extends Controller
     public function mostrar()
     {
         // //
-        $datos['olt'] = olt::paginate(5);
+        $datos['olt'] = olt::all();
         // return view('service_Profile.index', $datos);
         return view('aprovicion.form', $datos);
     }

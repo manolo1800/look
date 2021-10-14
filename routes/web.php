@@ -74,10 +74,10 @@ Route::prefix('/')->group(function () {
     Route::get('/centrals', 'CentralController@mostrar');
 });
 Route::prefix('/')->group(function () {
-    Route::resource('aprovision', OltController::class)->names('aprovision');
-    Route::get('/tipos','OltController@optionTipo');
+    Route::resource('olt','App\Http\Controllers\OltController')->names('olt');
+    //Route::get('/tipos','OltController@optionTipo');
     // Route::resource('aprovision', 'OltController')->name('OltController@index','aprovision');
-    Route::get('/aprovisions', 'OltController@mostrar');
+    //Route::get('/aprovisions', 'OltController@mostrar');
     // Route::get('/aprovisiones', 'OltController@mostrar2');
 });
 Route::prefix('/')->group(function () {

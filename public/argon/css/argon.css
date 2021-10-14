@@ -32,7 +32,7 @@
     --gray-dark: #32325d;
     --light: #ced4da;
     --lighter: #e9ecef;
-    --primary: #5e72e4;
+    --primary: #0026ff;
     --secondary: #f7fafc;
     --success: #2dce89;
     --info: #11cdef;
@@ -40,7 +40,7 @@
     --danger: #f5365c;
     --light: #adb5bd;
     --dark: #212529;
-    --default: #172b4d;
+    --default: #002463;
     --white: #fff;
     --neutral: #fff;
     --darker: black;
@@ -101,7 +101,7 @@ body
 
     text-align: left;
 
-    color: #525f7f;
+    color: var(--primary);
     background-color: #f8f9fe;
 }
 
@@ -228,7 +228,7 @@ a
 {
     text-decoration: none;
 
-    color: #5e72e4;
+    color: var(--primary);
     background-color: transparent;
 
     -webkit-text-decoration-skip: objects;
@@ -237,7 +237,7 @@ a:hover
 {
     text-decoration: none; 
 
-    color: #233dd2;
+    color: #0026ff;
 }
 
 a:not([href]):not([tabindex])
@@ -499,7 +499,7 @@ h6,
 
     margin-bottom: .5rem;
 
-    color: #32325d;
+    color: var(--default);
 }
 
 h1,
@@ -2204,8 +2204,8 @@ pre code
 .table .thead-dark th
 {
     color: #f8f9fe;
-    border-color: #1f3a68; 
-    background-color: #172b4d;
+    border-color: var(--primary); 
+    background-color: var(--default);
 }
 
 .table .thead-light th
@@ -2218,7 +2218,7 @@ pre code
 .table-dark
 {
     color: #f8f9fe;
-    background-color: #172b4d;
+    background-color: var(--default);
 }
 .table-dark th,
 .table-dark td,
@@ -15046,7 +15046,7 @@ button.bg-lighter:focus
 
 .bg-gradient-primary
 {
-    background: linear-gradient(87deg, #0026ff 0, #1e006f 100%) !important;
+    background: linear-gradient(87deg, #0089ff 0, #000521 100%) !important;
 }
 
 .bg-gradient-secondary
@@ -15402,7 +15402,7 @@ button.section-darker:focus
 
 .bg-gradient-primary
 {
-    background: linear-gradient(87deg, #0026ff 0, #1e006f 100%) !important;
+    background: linear-gradient(87deg, #0089ff 0, #000521 100%) !important;
 }
 
 .bg-gradient-secondary
